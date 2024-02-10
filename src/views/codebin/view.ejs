@@ -48,7 +48,6 @@
             };
 
             renderer.code = function(code, language) {
-                console.log(code, language);
                 if (language && hljs.getLanguage(language)) return `<pre><code class="hljs ${language}">${hljs.highlight(code, { language }).value}</code></pre>`;
                 else return `<pre><code>${code}</code></pre>`;
             };
