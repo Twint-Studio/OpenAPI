@@ -15,7 +15,7 @@ const app = fastify();
 app.register(require('@fastify/static'), {
     root: path.join(__dirname, 'assets'),
     prefix: '/assets/',
-})
+});
 
 app.register(require("@fastify/view"), {
     engine: {
