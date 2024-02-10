@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <title>OpenAPI - Shorten</title>
+</head>
+<body>
+
+    <%- include("../navbar.ejs") %>
+
+    <div class="container">
+        <form id="form" class="form form-container">
+            <div class="form-group">
+                <label for="url" class="form-label">URL</label>
+                <input type="text" name="url" id="url" placeholder="Enter long link here" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label for="username" class="form-label">Alias</label>
+                <input type="code" name="code" id="code" placeholder="Enter alias (optional)" class="form-input">
+            </div>
+            <button onclick="submitForm()" id="button" class="button button-primary button-full">Shorten</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <div class="form form-container">
+            <table id="table" class="table">
+                <thead>
+                    <tr>
+                        <th>Full URL</th>
+                        <th>Short URL</th>
+                        <th>Clicks</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById("form");
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+        });
+
+        async function submitForm() {
+            const code = document.getElementById("code").value;
+            const url = document.getElementById("url").value;
+
+            const response = await (await fetch("/shorten/create", {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ url, code })
+            })).json();
+
+            if (!response.success) {
+                alert(response.message ? response.message : "An error has occurred");
+                return window.location.reload();
+            }
+
+            const shorten = `${location.origin}/shorten/${response.data.code}`;
+
+            navigator.clipboard.writeText(shorten);
+
+            alert(shorten);
+        }
+
+        async function listShorten() {
+            const table = document.getElementById("table");
+            const tbody = table.querySelector("tbody");
+
+            const response = await (await fetch("/shorten/get")).json();
+
+            const list = response.data;
+            if (!list?.length) return;
+
+            const propertyOrder = ['.url', '.code', '.count'];
+
+            list.forEach(item => {
+                const row = tbody.insertRow(-1);
+
+                propertyOrder.forEach(order => {
+                    const prop = order.slice(1);
+                    const cell = row.insertCell(-1);
+
+                    if (order === '.url' || order === '.code') {
+                        const link = document.createElement('a');
+
+                        link.href = order === '.code' ? `${location.origin}/shorten/${item[prop]}` : item[prop];
+                        link.textContent = item[prop];
+
+                        cell.appendChild(link);
+                    } else cell.innerHTML = item[prop] || '';
+                });
+            });
+        }
+
+        listShorten();
+    </script>
+
+</body>
+</html>
