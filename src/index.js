@@ -181,6 +181,6 @@ app.get('/codebin/:id', async (req, reply) => {
     }
 });
 
-app.listen({ port: 3000 }).then(() => {
+app.listen({ port: 3000, host: "0.0.0.0" }).then(() => {
     console.log('Server running at http://localhost:3000/');
 });
