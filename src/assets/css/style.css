@@ -300,6 +300,18 @@ body {
     padding: 0;
 }
 
+#content blockquote {
+    border-left: 4px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    padding: .6em 1em;
+    margin: 0;
+}
+
+#content a {
+    color: var(--text-color-secondary);
+}
+
 #content h1,
 #content h2,
 #content h3,
@@ -317,5 +329,4 @@ body {
 #content h5 a,
 #content h6 a {
     text-decoration: none;
-    color: var(--text-color-secondary);
 }
