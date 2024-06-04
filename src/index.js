@@ -12,6 +12,10 @@ const codebinSchema = require("./models/codebin");
 const fastify = require('fastify');
 const app = fastify();
 
+app.register(require('@fastify/cors'), {
+    origin: true
+});
+
 app.register(require('@fastify/static'), {
     root: path.join(__dirname, 'assets'),
     prefix: '/assets/',
