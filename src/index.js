@@ -3,22 +3,22 @@ const path = require("path");
 
 const config = require("../config.json");
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 mongoose.connect(config.database.mongodb);
 
 const shortenSchema = require("./models/shorten");
 const codebinSchema = require("./models/codebin");
 
-const fastify = require('fastify');
+const fastify = require("fastify");
 const app = fastify();
 
-app.register(require('@fastify/cors'), {
+app.register(require("@fastify/cors"), {
     origin: true
 });
 
-app.register(require('@fastify/static'), {
-    root: path.join(__dirname, 'assets'),
-    prefix: '/assets/',
+app.register(require("@fastify/static"), {
+    root: path.join(__dirname, "assets"),
+    prefix: "/assets/",
 });
 
 app.register(require("@fastify/view"), {
@@ -27,22 +27,22 @@ app.register(require("@fastify/view"), {
     }
 });
 
-app.register(require('@fastify/formbody'));
+app.register(require("@fastify/formbody"));
 
-app.get('/', async (req, reply) => {
+app.get("/", async (req, reply) => {
     return reply.view("/src/views/index.ejs");
 });
 
-app.get('/endpoint', async (req, reply) => {
+app.get("/endpoint", async (req, reply) => {
     return reply.view("/src/views/endpoint.ejs");
 });
 
 // Shorten
-app.get('/shorten', async (req, reply) => {
+app.get("/shorten", async (req, reply) => {
     return reply.view("/src/views/shorten/index.ejs");
 });
 
-app.post('/shorten/create', async (req, reply) => {
+app.post("/shorten/create", async (req, reply) => {
     let { code, url } = req.body;
 
     if (!url) return {
@@ -68,7 +68,7 @@ app.post('/shorten/create', async (req, reply) => {
     }
 });
 
-app.get('/shorten/get', async (req, reply) => {
+app.get("/shorten/get", async (req, reply) => {
     const shorten = await shortenSchema.find({});
 
     return {
@@ -78,7 +78,7 @@ app.get('/shorten/get', async (req, reply) => {
     }
 });
 
-app.get('/shorten/get/:code', async (req, reply) => {
+app.get("/shorten/get/:code", async (req, reply) => {
     let { account_id, account_token } = req.cookies;
 
     await auth(reply, account_id, account_token);
@@ -98,7 +98,7 @@ app.get('/shorten/get/:code', async (req, reply) => {
     }
 });
 
-app.get('/shorten/:code', async (req, reply) => {
+app.get("/shorten/:code", async (req, reply) => {
     try {
         const { code } = req.params;
 
@@ -115,11 +115,11 @@ app.get('/shorten/:code', async (req, reply) => {
 });
 
 // Codebin
-app.get('/codebin', async (req, reply) => {
+app.get("/codebin", async (req, reply) => {
     return reply.view("/src/views/codebin/index.ejs");
 });
 
-app.post('/codebin/create', async (req, reply) => {
+app.post("/codebin/create", async (req, reply) => {
     let { content, type } = req.body;
 
     if (!content) return {
@@ -140,7 +140,7 @@ app.post('/codebin/create', async (req, reply) => {
     }
 });
 
-app.get('/codebin/get', async (req, reply) => {
+app.get("/codebin/get", async (req, reply) => {
     const codebin = await codebinSchema.find({});
 
     return {
@@ -150,7 +150,7 @@ app.get('/codebin/get', async (req, reply) => {
     }
 });
 
-app.get('/codebin/get/:id', async (req, reply) => {
+app.get("/codebin/get/:id", async (req, reply) => {
     const { id } = req.params;
 
     const codebin = await codebinSchema.findById(id);
@@ -166,7 +166,7 @@ app.get('/codebin/get/:id', async (req, reply) => {
     }
 });
 
-app.get('/codebin/:id', async (req, reply) => {
+app.get("/codebin/:id", async (req, reply) => {
     try {
         const { id } = req.params;
 
@@ -186,5 +186,5 @@ app.get('/codebin/:id', async (req, reply) => {
 });
 
 app.listen({ port: 3000, host: "0.0.0.0" }).then(() => {
-    console.log('Server running at http://localhost:3000/');
+    console.log("Server running at http://localhost:3000/");
 });
